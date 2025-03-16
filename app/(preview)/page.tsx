@@ -163,6 +163,7 @@ export default function Page() {
           </label>
           <div className="flex items-center">
             <input
+              aria-label="no of question"
               type="range"
               min="1"
               max="12"
