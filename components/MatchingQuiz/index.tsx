@@ -12,35 +12,11 @@ interface CardData {
 }
 interface Props {
   title: string;
-  clearPDF: () => void;
+  ResetAll: () => void;
   matchCards: Flashcard[];
 }
 
-const MatchingQuiz = ({ title, matchCards: ss, clearPDF }: Props) => {
-  // Initial data
-  const matchCards = [
-    {
-      question:
-        "What is the boarding locationWhat is the boarding locationWhat is the boarding locationWhat is the boarding locationWhat is the boarding location?",
-      answer: "AMRELI",
-    },
-    {
-      question: "What is the arrival location?",
-      answer: "SURAT KAMREJ BUS STAND",
-    },
-    { question: "What is the total fare?", answer: "686.00" },
-    {
-      question:
-        "What is the boarding locationWhat is the boarding locationWhat is the boarding locationWhat is the boarding locationWhat is the boarding location?",
-      answer: "AMRELI",
-    },
-    {
-      question: "What is the arrival location?",
-      answer: "SURAT KAMREJ BUS STAND",
-    },
-    { question: "What is the total fare?", answer: "686.00" },
-  ];
-
+const MatchingQuiz = ({ title, matchCards, ResetAll }: Props) => {
   // Create flashcards from the initial data
   const createFlashcards = (): CardData[] => {
     return matchCards.reduce<CardData[]>((acc, value, index) => {
@@ -161,7 +137,7 @@ const MatchingQuiz = ({ title, matchCards: ss, clearPDF }: Props) => {
     <div className="flex flex-col items-center p-2 w-full max-w-7xl mx-auto bg-red-0">
       <div className="w-full pt-2">
         <button
-          onClick={clearPDF}
+          onClick={ResetAll}
           className="pr-5 pl-3 py-1 bg-black/5 text-black/60 rounded-md border flex items-center justify-center gap-2"
         >
           <ChevronLeft className=" h-4 w-4" /> Back

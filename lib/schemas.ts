@@ -29,6 +29,7 @@ export const flashcardSchema = z.object({
 export type Question = z.infer<typeof questionSchema>;
 export type Flashcard = z.infer<typeof flashcardSchema>;
 
-export const questionsSchema = z.array(questionSchema).length(4);
-
-export const flashcardsSchema = z.array(flashcardSchema).length(3);
+export const createQuestionsSchema = (count: number) =>
+  z.array(questionSchema).length(count);
+export const createFlashcardsSchema = (count: number) =>
+  z.array(flashcardSchema).length(count);

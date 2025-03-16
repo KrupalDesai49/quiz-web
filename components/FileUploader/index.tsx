@@ -1,26 +1,13 @@
 "use client";
 
-import { Dispatch, SetStateAction, useState } from "react";
-import { experimental_useObject } from "ai/react";
-import { questionsSchema } from "@/lib/schemas";
-import { z } from "zod";
-import { toast } from "sonner";
-import { FileUp, Plus, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import Quiz from "@/components/quiz";
-import { Link } from "@/components/ui/link";
-import NextLink from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
 import { generateQuizTitle } from "@/app/(preview)/actions";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { AnimatePresence, motion } from "framer-motion";
+import { FileUp, Loader2, CircleX } from "lucide-react";
+import { Dispatch, SetStateAction, useState } from "react";
+import { toast } from "sonner";
 
 interface Props {
   setFiles: Dispatch<SetStateAction<File[]>>;
@@ -31,6 +18,8 @@ interface Props {
   isLoading: boolean;
   partialResultLenght: number | undefined;
   testMode: "quiz" | "flashcard" | "match";
+  questionsCount: number;
+  clearPdf: () => void;
 }
 
 const FileUploader = ({
@@ -42,6 +31,8 @@ const FileUploader = ({
   isLoading,
   partialResultLenght,
   testMode,
+  questionsCount,
+  clearPdf,
 }: Props) => {
   const [isDragging, setIsDragging] = useState(false);
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,7 +66,7 @@ const FileUploader = ({
         data: await encodeFileAsBase64(file),
       }))
     );
-    submit({ files: encodedFiles });
+    submit({ files: encodedFiles, count: questionsCount });
     const generatedTitle = await generateQuizTitle(encodedFiles[0].name);
     setTitle(generatedTitle);
   };
@@ -90,7 +81,7 @@ const FileUploader = ({
 
   return (
     <div
-      className=" w-full flex justify-center relative"
+      className=" w-full flex justify-center relative max-w-md mx-auto"
       onDragOver={(e) => {
         e.preventDefault();
         setIsDragging(true);
@@ -122,18 +113,20 @@ const FileUploader = ({
           </motion.div>
         )}
       </AnimatePresence>
-      <Card className="w-full max-w-md h-full border-0 sm:border sm:h-fit pt-6 ">
-        {/* <CardHeader className="text-center space-y-6">
-          <div className="space-y-2">
-            <CardTitle className="text-2xl font-bold">
-              PDF Quiz Generator
-            </CardTitle>
-            <CardDescription className="text-base">
-              Simply upload a PDF, and AI will create custom quizzes, match
-              cards, or flashcards to enhance your learning experience.
-            </CardDescription>
-          </div>
-        </CardHeader> */}
+      <AnimatePresence>
+        {!isDragging && !isLoading && files.length > 0 && (
+          <motion.div
+            onClick={clearPdf}
+            className="absolute  text-black/30 w-7 h-7 flex cursor-pointer  bg-gray-100 hover:bg-black hover:text-white transition-all top-3 right-3  rounded-full z-10 justify-center items-center "
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <CircleX className="w-5 h-5" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <Card className="w-full  h-full border-0 sm:border sm:h-fit pt-6 ">
         <CardContent>
           <form onSubmit={handleSubmitWithFiles} className="space-y-4">
             <div
@@ -190,7 +183,9 @@ const FileUploader = ({
                 />
                 <span className="text-muted-foreground text-center col-span-4 sm:col-span-2">
                   {partialResultLenght
-                    ? `Generating question ${partialResultLenght + 1} of 4`
+                    ? `Generating question ${
+                        partialResultLenght + 1
+                      } of ${questionsCount}`
                     : "Analyzing PDF content"}
                 </span>
               </div>

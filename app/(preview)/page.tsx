@@ -1,21 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { experimental_useObject } from "ai/react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 
 import FileUploader from "@/components/FileUploader";
+import Flashcards from "@/components/Flashcards";
 import { FlashCard, Match, QuizIcon } from "@/components/icons";
+import MatchingQuiz from "@/components/MatchingQuiz";
 import Quiz from "@/components/quiz";
 import {
+  createFlashcardsSchema,
+  createQuestionsSchema,
   Flashcard,
-  flashcardsSchema,
   Question,
-  questionsSchema,
 } from "@/lib/schemas";
-import MatchingQuiz from "@/components/MatchingQuiz";
-import Flashcards from "@/components/Flashcards";
 
 type TestMode = "quiz" | "flashcard" | "match";
 
@@ -27,6 +27,7 @@ export default function Page() {
   const [title, setTitle] = useState<string | undefined>("");
   const [testMode, setTestMode] = useState<TestMode>("quiz");
   const [isResultGenerated, setIsResultGenerated] = useState(false);
+  const [questionsCount, setQuestionsCount] = useState<number>(5);
 
   const {
     submit,
@@ -35,7 +36,11 @@ export default function Page() {
   } = experimental_useObject({
     api:
       testMode === "quiz" ? "/api/generate-quiz" : "/api/generate-flashcards",
-    schema: testMode === "quiz" ? questionsSchema : flashcardsSchema,
+    schema:
+      testMode === "quiz"
+        ? createQuestionsSchema(questionsCount)
+        : createFlashcardsSchema(questionsCount),
+
     initialValue: undefined,
     onError: () => {
       toast.error("Failed to generate content. Please try again.");
@@ -67,31 +72,31 @@ export default function Page() {
     },
   });
 
-  const clearPDF = () => {
-    setFiles([]);
+  const ResetAll = () => {
     setQuestions([]);
     setFlashCards([]);
     setMatchCards([]);
     setIsResultGenerated(false);
   };
+  const clearPDF = () => {
+    setFiles([]);
+  };
 
-  // Calculate progress based on test mode and expected result length
-  const expectedLength = testMode === "quiz" ? 4 : 3;
   const progress = partialResult
-    ? (partialResult.length / expectedLength) * 100
+    ? (partialResult.length / questionsCount) * 100
     : 0;
 
   if (testMode === "quiz" && isResultGenerated) {
     return (
-      <Quiz title={title || "Quiz"} questions={questions} clearPDF={clearPDF} />
+      <Quiz title={title || "Quiz"} questions={questions} ResetAll={ResetAll} />
     );
   }
-  if (testMode === "match" && !isResultGenerated) {
+  if (testMode === "match" && isResultGenerated) {
     return (
       <MatchingQuiz
         title={title || "Match Card"}
         matchCards={matchCards}
-        clearPDF={clearPDF}
+        ResetAll={ResetAll}
       />
     );
   }
@@ -100,7 +105,7 @@ export default function Page() {
       <Flashcards
         title={title || "Flash Card"}
         flashCards={flashCards}
-        clearPDF={clearPDF}
+        ResetAll={ResetAll}
       />
     );
   }
@@ -116,7 +121,7 @@ export default function Page() {
   ];
 
   return (
-    <div className="w-full bg-white flex flex-col  items-center justify-center min-h-[100dvh] px-2">
+    <div className="w-full bg-white flex flex-col  items-center justify-start md:pt-20 pt-14 min-h-[100dvh] px-2">
       {/* Title & description  */}
       <div className="flex flex-col max-w-xl mx-auto text-center  gap-1 ">
         <h1 className="sm:text-3xl text-2xl font-bold">PDF Quiz Generator</h1>
@@ -127,11 +132,18 @@ export default function Page() {
       </div>
 
       {/* Test Mode Selection */}
-      <div className="text-black/60 sm:gap-3 gap-2 items-center justify-center grid grid-cols-3 max-w-xl pb-10 pt-8 ">
+      <div className="text-black/60 sm:gap-3 gap-2 items-center justify-center grid grid-cols-3 max-w-xl pb-5 pt-8 ">
         {testModeOptions.map((option) => (
           <div
             key={option.id}
-            onClick={() => setTestMode(option.id)}
+            onClick={() => {
+              if (isLoading) {
+                return toast.error(
+                  "You can't change test mode while Q&A generating"
+                );
+              }
+              setTestMode(option.id);
+            }}
             className={twMerge(
               "flex flex-col items-center justify-center bg-blue-50 cursor-pointer px-10 gap-1 py-6 border transition-all ring-transparent border-blue-100 rounded-xl",
               testMode === option.id && "ring-2 ring-blue-300"
@@ -141,6 +153,29 @@ export default function Page() {
             <p className="sm:text-base text-sm">{option.label}</p>
           </div>
         ))}
+      </div>
+
+      {/* Count Control */}
+      <div className="w-full max-w-lg mb-5">
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Number of {testMode === "quiz" ? "questions" : "cards"} to generate:
+          </label>
+          <div className="flex items-center">
+            <input
+              type="range"
+              min="1"
+              max="12"
+              value={questionsCount}
+              onChange={(e) => {
+                const newValue = parseInt(e.target.value);
+                setQuestionsCount(newValue);
+              }}
+              className="w-full h-2 bg-blue-200 rounded-lg  cursor-pointer"
+            />
+            <span className="ml-3 w-8 text-center">{questionsCount}</span>
+          </div>
+        </div>
       </div>
 
       {/* File Upload Card */}
@@ -154,6 +189,8 @@ export default function Page() {
           partialResultLenght={partialResult ? partialResult.length : undefined}
           isLoading={isLoading}
           testMode={testMode}
+          questionsCount={questionsCount}
+          clearPdf={clearPDF}
         />
       </div>
     </div>

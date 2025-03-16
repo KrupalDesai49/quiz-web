@@ -16,7 +16,7 @@ import { Question } from "@/lib/schemas";
 
 type QuizProps = {
   questions: Question[];
-  clearPDF: () => void;
+  ResetAll: () => void;
   title: string;
 };
 
@@ -74,7 +74,7 @@ const QuestionCard: React.FC<{
 
 export default function Quiz({
   questions,
-  clearPDF,
+  ResetAll,
   title = "Quiz",
 }: QuizProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -136,7 +136,7 @@ export default function Quiz({
     <div className="min-h-screen bg-background text-foreground">
       <main className="container mx-auto px-4 py-12 max-w-4xl">
         <button
-          onClick={clearPDF}
+          onClick={ResetAll}
           className="pr-5 pl-3 py-1 bg-black/5 text-black/60 rounded-md border flex items-center justify-center gap-2"
         >
           <ChevronLeft className=" h-4 w-4" /> Back
@@ -207,7 +207,7 @@ export default function Quiz({
                         <RefreshCw className="mr-2 h-4 w-4" /> Reset Quiz
                       </Button>
                       <Button
-                        onClick={clearPDF}
+                        onClick={ResetAll}
                         className="bg-primary hover:bg-primary/90 w-full"
                       >
                         <FileText className="mr-2 h-4 w-4" /> Try Another PDF
