@@ -32,10 +32,10 @@ const QuestionCard: React.FC<{
   return (
     <div className="space-y-6">
       <h2 className="text-lg font-semibold leading-tight">
-        {question.question}
+        {question?.question}
       </h2>
       <div className="grid grid-cols-1 gap-4">
-        {question.options.map((option, index) => (
+        {question?.options.map((option, index) => (
           <Button
             key={index}
             variant={
@@ -45,10 +45,10 @@ const QuestionCard: React.FC<{
               showCorrectAnswer && answerLabels[index] === question.answer
                 ? "bg-green-600 hover:bg-green-700"
                 : showCorrectAnswer &&
-                    selectedAnswer === answerLabels[index] &&
-                    selectedAnswer !== question.answer
-                  ? "bg-red-600 hover:bg-red-700"
-                  : ""
+                  selectedAnswer === answerLabels[index] &&
+                  selectedAnswer !== question.answer
+                ? "bg-red-600 hover:bg-red-700"
+                : ""
             }`}
             onClick={() => onSelectAnswer(answerLabels[index])}
           >
@@ -79,7 +79,7 @@ export default function Quiz({
 }: QuizProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<string[]>(
-    Array(questions.length).fill(null),
+    Array(questions.length).fill(null)
   );
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState<number | null>(null);
