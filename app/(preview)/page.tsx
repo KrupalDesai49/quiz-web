@@ -180,7 +180,7 @@ export default function Page() {
       </div>
 
       {/* File Upload Card */}
-      <div className="text-black w-full ">
+      <div className="text-black w-full pb-12 ">
         <FileUploader
           files={files}
           setFiles={setFiles}
