@@ -1,7 +1,7 @@
 "use client";
 
 import { experimental_useObject } from "ai/react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 
