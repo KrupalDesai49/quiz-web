@@ -1,5 +1,7 @@
 import { Flashcard } from "@/lib/schemas";
+import { ChevronLeft } from "lucide-react";
 import React, { useState, useEffect } from "react";
+import { Match } from "../icons";
 
 interface CardData {
   id: number;
@@ -14,16 +16,30 @@ interface Props {
   matchCards: Flashcard[];
 }
 
-const MatchingQuiz = ({ title, matchCards, clearPDF }: Props) => {
+const MatchingQuiz = ({ title, matchCards: ss, clearPDF }: Props) => {
   // Initial data
-  // const initialData = [
-  //   { question: "What is the boarding location?", answer: "AMRELI" },
-  //   {
-  //     question: "What is the arrival location?",
-  //     answer: "SURAT KAMREJ BUS STAND",
-  //   },
-  //   { question: "What is the total fare?", answer: "686.00" },
-  // ];
+  const matchCards = [
+    {
+      question:
+        "What is the boarding locationWhat is the boarding locationWhat is the boarding locationWhat is the boarding locationWhat is the boarding location?",
+      answer: "AMRELI",
+    },
+    {
+      question: "What is the arrival location?",
+      answer: "SURAT KAMREJ BUS STAND",
+    },
+    { question: "What is the total fare?", answer: "686.00" },
+    {
+      question:
+        "What is the boarding locationWhat is the boarding locationWhat is the boarding locationWhat is the boarding locationWhat is the boarding location?",
+      answer: "AMRELI",
+    },
+    {
+      question: "What is the arrival location?",
+      answer: "SURAT KAMREJ BUS STAND",
+    },
+    { question: "What is the total fare?", answer: "686.00" },
+  ];
 
   // Create flashcards from the initial data
   const createFlashcards = (): CardData[] => {
@@ -142,8 +158,16 @@ const MatchingQuiz = ({ title, matchCards, clearPDF }: Props) => {
   };
 
   return (
-    <div className="flex flex-col items-center p-4 w-full max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">{title}</h1>
+    <div className="flex flex-col items-center p-2 w-full max-w-7xl mx-auto bg-red-0">
+      <div className="w-full pt-2">
+        <button
+          onClick={clearPDF}
+          className="pr-5 pl-3 py-1 bg-black/5 text-black/60 rounded-md border flex items-center justify-center gap-2"
+        >
+          <ChevronLeft className=" h-4 w-4" /> Back
+        </button>
+      </div>
+      <h1 className="text-2xl font-bold mb-4 pt-4">{title}</h1>
 
       <div className="mb-4 w-full flex justify-between">
         <div className="text-lg">
@@ -158,11 +182,11 @@ const MatchingQuiz = ({ title, matchCards, clearPDF }: Props) => {
         </div>
       )}
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full">
+      <div className="grid grid-cols-2 md:grid-cols-4 sm:gap-4 gap-3 w-full">
         {cards.map((card) => (
           <div
             key={card.id}
-            className="h-32 perspective-1000"
+            className="md:min-h-40 min-h-56 h-full perspective-1000"
             onClick={() => handleCardClick(card)}
           >
             <div
@@ -172,7 +196,9 @@ const MatchingQuiz = ({ title, matchCards, clearPDF }: Props) => {
             >
               {/* Card Back */}
               <div className="absolute w-full h-full backface-hidden bg-gray-200 rounded-lg shadow-md flex items-center justify-center">
-                <span className="font-medium text-xl">?</span>
+                <span className="font-medium text-xl">
+                  <Match />
+                </span>
               </div>
 
               {/* Card Front */}
@@ -183,7 +209,9 @@ const MatchingQuiz = ({ title, matchCards, clearPDF }: Props) => {
                     : "bg-blue-100"
                 }`}
               >
-                <span className="font-medium">{card.text}</span>
+                <span className="font-medium text-sm sm:text-base">
+                  {card.text}
+                </span>
               </div>
             </div>
           </div>
@@ -191,27 +219,11 @@ const MatchingQuiz = ({ title, matchCards, clearPDF }: Props) => {
       </div>
 
       <button
-        className="mt-6 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-6 rounded"
+        className="mt-8 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-6 rounded mb-5 "
         onClick={resetGame}
       >
         Reset Game
       </button>
-
-      {/* Add CSS for 3D flip effect */}
-      <style jsx>{`
-        .perspective-1000 {
-          perspective: 1000px;
-        }
-        .transform-style-preserve-3d {
-          transform-style: preserve-3d;
-        }
-        .backface-hidden {
-          backface-visibility: hidden;
-        }
-        .rotate-y-180 {
-          transform: rotateY(180deg);
-        }
-      `}</style>
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import { Flashcard } from "@/lib/schemas";
+import { ChevronLeft } from "lucide-react";
 import React, { useState } from "react";
 
 interface FlashcardData {
@@ -11,17 +12,30 @@ interface Props {
   flashCards: Flashcard[];
 }
 
-const Flashcards = ({ title, flashCards, clearPDF }: Props) => {
-  // Sample flashcard data
-  //   const flashcardsData: FlashcardData[] = [
-  //     { question: "What is the boarding location?", answer: "AMRELI" },
-  //     {
-  //       question: "What is the arrival location?",
-  //       answer: "SURAT KAMREJ BUS STAND",
-  //     },
-  //     { question: "What is the total fare?", answer: "686.00" },
-  //   ];
-
+const Flashcards = ({ title, flashCards: ss, clearPDF }: Props) => {
+  // Initial data
+  const flashCards = [
+    {
+      question:
+        "What is the boarding locationWhat is the boarding locationWhat is the boarding locationWhat is the boarding locationWhat is the boarding location?",
+      answer: "AMRELI",
+    },
+    {
+      question: "What is the arrival location?",
+      answer: "SURAT KAMREJ BUS STAND",
+    },
+    { question: "What is the total fare?", answer: "686.00" },
+    {
+      question:
+        "What is the boarding locationWhat is the boarding locationWhat is the boarding locationWhat is the boarding locationWhat is the boarding location?",
+      answer: "AMRELI",
+    },
+    {
+      question: "What is the arrival location?",
+      answer: "SURAT KAMREJ BUS STAND",
+    },
+    { question: "What is the total fare?", answer: "686.00" },
+  ];
   // State variables
   const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
@@ -51,8 +65,16 @@ const Flashcards = ({ title, flashCards, clearPDF }: Props) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 w-full max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-8">{title}</h1>
+    <div className="flex flex-col items-center justify-center p-2 w-full max-w-7xl mx-auto">
+      <div className="w-full pt-2">
+        <button
+          onClick={clearPDF}
+          className="pr-5 pl-3 py-1 bg-black/5 text-black/60 rounded-md border flex items-center justify-center gap-2"
+        >
+          <ChevronLeft className=" h-4 w-4" /> Back
+        </button>
+      </div>
+      <h1 className="text-2xl font-bold mb-8 pt-4">{title}</h1>
 
       {/* Card counter */}
       <div className="mb-4 text-lg">
@@ -61,7 +83,7 @@ const Flashcards = ({ title, flashCards, clearPDF }: Props) => {
 
       {/* Flashcard with 3D flip effect */}
       <div
-        className="w-full h-64 perspective-1000 mb-8 cursor-pointer"
+        className="w-full h-64 perspective-1000 mb-8 cursor-pointer max-w-xl"
         onClick={handleCardClick}
       >
         <div
@@ -132,22 +154,6 @@ const Flashcards = ({ title, flashCards, clearPDF }: Props) => {
           </svg>
         </button>
       </div>
-
-      {/* CSS for 3D flip effect */}
-      <style jsx>{`
-        .perspective-1000 {
-          perspective: 1000px;
-        }
-        .transform-style-preserve-3d {
-          transform-style: preserve-3d;
-        }
-        .backface-hidden {
-          backface-visibility: hidden;
-        }
-        .rotate-y-180 {
-          transform: rotateY(180deg);
-        }
-      `}</style>
     </div>
   );
 };

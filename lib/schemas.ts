@@ -18,11 +18,11 @@ export const questionSchema = z.object({
 export const flashcardSchema = z.object({
   question: z
     .string()
-    .max(200, "The question must not be more than 200 characters")
+    .max(150, "The question must not be more than 150 characters")
     .describe("The question text"),
   answer: z
     .string()
-    .max(200, "The answer must not be more than 200 characters")
+    .max(150, "The answer must not be more than 150 characters")
     .describe("The answer text"),
 });
 

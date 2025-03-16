@@ -42,47 +42,22 @@ export default function Page() {
       setFiles([]);
     },
     onFinish: ({ object }) => {
-      console.log("object@@@2222", object);
       if (!object) {
         toast.error("Received empty response. Please try again.");
         return;
       }
+      if (!Array.isArray(object)) {
+        console.warn("Received quiz data but incorrect format:", object);
+        toast.error("Quiz format incorrect. Please try again.");
+      }
 
       try {
         if (testMode === "quiz") {
-          // Ensure object is an array and has expected structure
-          console.log("Array.isArray(object)", Array.isArray(object));
-          console.log("object.length === 4", object.length === 4);
-          if (Array.isArray(object) && object.length === 4) {
-            setQuestions(object as Question[]);
-            console.log("setQuestions@@@ DONEEEEEE");
-          } else {
-            console.warn("Received quiz data but incorrect format:", object);
-            toast.error("Quiz format incorrect. Please try again.");
-          }
+          setQuestions(object as Question[]);
         } else if (testMode === "flashcard") {
-          // Ensure object is an array with expected structure
-          if (Array.isArray(object) && object.length === 3) {
-            setFlashCards(object as Flashcard[]);
-            console.log("setFlashCards@@@ DONEEEEEE");
-          } else {
-            console.warn(
-              "Received flashcard data but incorrect format:",
-              object
-            );
-            toast.error("Flashcard format incorrect. Please try again.");
-          }
+          setFlashCards(object as Flashcard[]);
         } else if (testMode === "match") {
-          if (Array.isArray(object) && object.length === 3) {
-            setMatchCards(object as Flashcard[]);
-            console.log("setFlashCards@@@ DONEEEEEE");
-          } else {
-            console.warn(
-              "Received match card data but incorrect format:",
-              object
-            );
-            toast.error("match card format incorrect. Please try again.");
-          }
+          setMatchCards(object as Flashcard[]);
         }
         setIsResultGenerated(true);
       } catch (err) {
@@ -96,6 +71,7 @@ export default function Page() {
     setFiles([]);
     setQuestions([]);
     setFlashCards([]);
+    setMatchCards([]);
     setIsResultGenerated(false);
   };
 
@@ -105,25 +81,12 @@ export default function Page() {
     ? (partialResult.length / expectedLength) * 100
     : 0;
 
-  // If quiz is complete, show the quiz component
-  if (
-    testMode === "quiz" &&
-    isResultGenerated
-    // questions &&
-    // Array.isArray(questions) &&
-    // questions.length === 4
-  ) {
+  if (testMode === "quiz" && isResultGenerated) {
     return (
       <Quiz title={title || "Quiz"} questions={questions} clearPDF={clearPDF} />
     );
   }
-  if (
-    testMode === "match" &&
-    isResultGenerated
-    // questions &&
-    // Array.isArray(questions) &&
-    // questions.length === 3
-  ) {
+  if (testMode === "match" && !isResultGenerated) {
     return (
       <MatchingQuiz
         title={title || "Match Card"}
@@ -132,13 +95,7 @@ export default function Page() {
       />
     );
   }
-  if (
-    testMode === "flashcard" &&
-    isResultGenerated
-    // questions &&
-    // Array.isArray(questions) &&
-    // questions.length === 3
-  ) {
+  if (testMode === "flashcard" && isResultGenerated) {
     return (
       <Flashcards
         title={title || "Flash Card"}
@@ -147,10 +104,7 @@ export default function Page() {
       />
     );
   }
-  // return <Flashcards />;
-  // return <MatchingQuiz />;
 
-  // Define test mode options for cleaner rendering
   const testModeOptions: {
     id: TestMode;
     label: string;
@@ -160,13 +114,6 @@ export default function Page() {
     { id: "match", label: "Match", icon: <Match /> },
     { id: "quiz", label: "Quiz", icon: <QuizIcon /> },
   ];
-
-  // useEffect(() => {
-  //   console.log("title:", title);
-  //   console.log("flashCards:", flashCards);
-  //   console.log("questions:", questions);
-  //   console.log("testMode:", testMode);
-  // }, [title, flashCards, testMode, questions]);
 
   return (
     <div className="w-full bg-white flex flex-col  items-center justify-center min-h-[100dvh] px-2">
