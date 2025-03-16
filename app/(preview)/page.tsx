@@ -5,7 +5,7 @@ import { experimental_useObject } from "ai/react";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 
-import FileUploader from "@/components/FileUploader/page";
+import FileUploader from "@/components/FileUploader";
 import { FlashCard, Match, QuizIcon } from "@/components/icons";
 import Quiz from "@/components/quiz";
 import {
@@ -14,6 +14,8 @@ import {
   Question,
   questionsSchema,
 } from "@/lib/schemas";
+import MatchingQuiz from "@/components/MatchingQuiz";
+import Flashcards from "@/components/Flashcards";
 
 type TestMode = "quiz" | "flashcard" | "match";
 
@@ -21,6 +23,7 @@ export default function Page() {
   const [files, setFiles] = useState<File[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [flashCards, setFlashCards] = useState<Flashcard[]>([]);
+  const [matchCards, setMatchCards] = useState<Flashcard[]>([]);
   const [title, setTitle] = useState<string | undefined>("");
   const [testMode, setTestMode] = useState<TestMode>("quiz");
   const [isResultGenerated, setIsResultGenerated] = useState(false);
@@ -57,7 +60,7 @@ export default function Page() {
             console.warn("Received quiz data but incorrect format:", object);
             toast.error("Quiz format incorrect. Please try again.");
           }
-        } else {
+        } else if (testMode === "flashcard") {
           // Ensure object is an array with expected structure
           if (Array.isArray(object) && object.length === 3) {
             setFlashCards(object as Flashcard[]);
@@ -68,6 +71,17 @@ export default function Page() {
               object
             );
             toast.error("Flashcard format incorrect. Please try again.");
+          }
+        } else if (testMode === "match") {
+          if (Array.isArray(object) && object.length === 3) {
+            setMatchCards(object as Flashcard[]);
+            console.log("setFlashCards@@@ DONEEEEEE");
+          } else {
+            console.warn(
+              "Received match card data but incorrect format:",
+              object
+            );
+            toast.error("match card format incorrect. Please try again.");
           }
         }
         setIsResultGenerated(true);
@@ -82,6 +96,7 @@ export default function Page() {
     setFiles([]);
     setQuestions([]);
     setFlashCards([]);
+    setIsResultGenerated(false);
   };
 
   // Calculate progress based on test mode and expected result length
@@ -93,15 +108,47 @@ export default function Page() {
   // If quiz is complete, show the quiz component
   if (
     testMode === "quiz" &&
-    isResultGenerated &&
-    questions &&
-    Array.isArray(questions) &&
-    questions.length === 4
+    isResultGenerated
+    // questions &&
+    // Array.isArray(questions) &&
+    // questions.length === 4
   ) {
     return (
       <Quiz title={title || "Quiz"} questions={questions} clearPDF={clearPDF} />
     );
   }
+  if (
+    testMode === "match" &&
+    isResultGenerated
+    // questions &&
+    // Array.isArray(questions) &&
+    // questions.length === 3
+  ) {
+    return (
+      <MatchingQuiz
+        title={title || "Match Card"}
+        matchCards={matchCards}
+        clearPDF={clearPDF}
+      />
+    );
+  }
+  if (
+    testMode === "flashcard" &&
+    isResultGenerated
+    // questions &&
+    // Array.isArray(questions) &&
+    // questions.length === 3
+  ) {
+    return (
+      <Flashcards
+        title={title || "Flash Card"}
+        flashCards={flashCards}
+        clearPDF={clearPDF}
+      />
+    );
+  }
+  // return <Flashcards />;
+  // return <MatchingQuiz />;
 
   // Define test mode options for cleaner rendering
   const testModeOptions: {
@@ -148,6 +195,8 @@ export default function Page() {
           </div>
         ))}
       </div>
+
+      {/* File Upload Card */}
       <div className="text-black w-full ">
         <FileUploader
           files={files}

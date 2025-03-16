@@ -135,6 +135,12 @@ export default function Quiz({
   return (
     <div className="min-h-screen bg-background text-foreground">
       <main className="container mx-auto px-4 py-12 max-w-4xl">
+        <button
+          onClick={clearPDF}
+          className="pr-5 pl-3 py-1 bg-black/5 text-black/60 rounded-md border flex items-center justify-center gap-2"
+        >
+          <ChevronLeft className=" h-4 w-4" /> Back
+        </button>
         <h1 className="text-3xl font-bold mb-8 text-center text-foreground">
           {title}
         </h1>
