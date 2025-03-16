@@ -171,7 +171,7 @@ const MatchingQuiz = ({ title, matchCards, ResetAll }: Props) => {
               }`}
             >
               {/* Card Back */}
-              <div className="absolute w-full h-full backface-hidden bg-gray-200 rounded-lg shadow-md flex items-center justify-center">
+              <div className="absolute w-full h-full backface-hidden bg-blue-100 rounded-lg shadow-md flex items-center justify-center">
                 <span className="font-medium text-xl">
                   <Match />
                 </span>
